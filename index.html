@@ -1,0 +1,416 @@
+<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Quy trình J01 Glam Diamond</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;800&family=JetBrains+Mono:wght@500&display=swap">
+<style id="css">
+/* Layout: thanh công cụ dính trên cùng → tóm tắt "anh tham gia ở đâu" → cài đặt → A phần chung → B Custom | C Canva → báo cáo sáng → cần chốt. Mỗi bước có mã + người làm + thay đổi so với trước. Bấm bước để sửa. */
+:root{
+  --bg:#f3f6f5; --panel:#ffffff; --fg:#17302c; --muted:#5d716d; --line:#b9cbc7;
+  --chat:#2f6fd0; --chat-bg:#e6effc;
+  --code:#7a3fc2; --code-bg:#f0e8fb;
+  --shop:#b4561b; --shop-bg:#fbeee3;
+  --nv:#2c8a55; --nv-bg:#e4f4ea;
+  --bot:#b8327a; --bot-bg:#fbe7f1;
+  --auto:#5d716d; --auto-bg:#eef2f1;
+  --gap:#c03a3a;
+  --ok:#1f7a45; --ok-bg:#dcf3e4; --doing:#8a6300; --doing-bg:#fff0bf; --bad:#b42323; --bad-bg:#fcdede; --todo:#6b7c78; --todo-bg:#e9eeec;
+  --sans:"Be Vietnam Pro",system-ui,sans-serif; --mono:"JetBrains Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0f1a18; --panel:#16241f; --fg:#e2ece9; --muted:#93a8a3; --line:#33504a;
+  --chat:#7eaaf0; --chat-bg:#1a2a44; --code:#b892ec; --code-bg:#2a1f3d;
+  --shop:#eb9a63; --shop-bg:#3a2516; --nv:#6fcf98; --nv-bg:#163223;
+  --bot:#f08cc0; --bot-bg:#3b1a2c;
+  --auto:#93a8a3; --auto-bg:#1c2b27; --gap:#ef7a7a;
+  --ok:#7fd9a2; --ok-bg:#173826; --doing:#f2cf5b; --doing-bg:#3a3010; --bad:#f08a8a; --bad-bg:#3d1a1a; --todo:#93a8a3; --todo-bg:#1f2b28;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1a18; --panel:#16241f; --fg:#e2ece9; --muted:#93a8a3; --line:#33504a;
+  --chat:#7eaaf0; --chat-bg:#1a2a44; --code:#b892ec; --code-bg:#2a1f3d;
+  --shop:#eb9a63; --shop-bg:#3a2516; --nv:#6fcf98; --nv-bg:#163223;
+  --bot:#f08cc0; --bot-bg:#3b1a2c;
+  --auto:#93a8a3; --auto-bg:#1c2b27; --gap:#ef7a7a;
+  --ok:#7fd9a2; --ok-bg:#173826; --doing:#f2cf5b; --doing-bg:#3a3010; --bad:#f08a8a; --bad-bg:#3d1a1a; --todo:#93a8a3; --todo-bg:#1f2b28;
+  color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:var(--sans);font-size:14px;line-height:1.45;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 48px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--panel)}
+.wrap{max-width:1080px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
+h1{font-size:24px;font-weight:800;margin:0;text-wrap:balance}
+h2{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0}
+.sub{color:var(--muted);margin:0;max-width:72ch}
+a{color:var(--chat)}
+button,select,input,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--bot);outline-offset:2px}
+
+/* thanh công cụ */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;margin-inline:calc(-1 * max(16px,env(safe-area-inset-left,0px)));
+  padding:10px max(16px,env(safe-area-inset-left,0px));background:var(--panel);border-bottom:1px solid var(--line);
+  display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.bar .grow{flex:1 1 auto;min-width:0;font-size:13px;color:var(--muted)}
+.btn{border:1.5px solid var(--line);background:var(--panel);border-radius:8px;padding:6px 12px;font-weight:600;cursor:pointer}
+.btn:hover{border-color:var(--fg)}
+.btn.pri{background:var(--bot);border-color:var(--bot);color:#fff}
+.btn.on{background:var(--bot-bg);border-color:var(--bot);color:var(--bot)}
+.btn:disabled{opacity:.45;cursor:default}
+.btn.sm{padding:3px 9px;font-size:12px}
+.btn.del{color:var(--gap);border-color:var(--gap)}
+
+.legend{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font-size:12px;font-weight:600;padding:3px 10px;border-radius:99px;border:1.5px solid}
+.chip.chat{color:var(--chat);background:var(--chat-bg);border-color:var(--chat)}
+.chip.code{color:var(--code);background:var(--code-bg);border-color:var(--code)}
+.chip.shop{color:var(--shop);background:var(--shop-bg);border-color:var(--shop);border-width:2.5px}
+.chip.nv{color:var(--nv);background:var(--nv-bg);border-color:var(--nv)}
+.chip.bot{color:var(--bot);background:var(--bot-bg);border-color:var(--bot)}
+.chip.auto{color:var(--auto);background:var(--auto-bg);border-color:var(--auto)}
+.chip.gap{color:var(--gap);border-style:dashed;border-color:var(--gap)}
+.chip.moi{color:var(--fg);border-color:var(--line);background:var(--panel)}
+
+.block,.lane{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.block>.head,.lane>.head{display:flex;flex-wrap:wrap;gap:8px;align-items:baseline;justify-content:space-between}
+.lane h3{margin:0;font-size:17px;font-weight:800}
+.lane h3 span{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:500;margin-left:6px}
+.lane h4{margin:6px 0 0;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);border-top:1px solid var(--line);padding-top:14px}
+.count{font-size:12px;color:var(--shop);font-weight:600;margin:0}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media (max-width:760px){.cols{grid-template-columns:1fr}}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:8px}
+.flow{display:flex;flex-direction:column;align-items:stretch}
+.flow>.n{position:relative;margin-bottom:22px}
+.flow>.n:not(:last-child)::before{content:"↓";position:absolute;left:50%;bottom:-20px;transform:translateX(-50%);color:var(--muted);font-weight:600}
+.flow>.n:last-child{margin-bottom:0}
+.flow>h4{margin-bottom:12px}
+
+/* thẻ bước */
+.n{border:1.5px solid;border-radius:8px;padding:8px 10px;font-weight:500;background:var(--panel);min-width:0;text-align:left;display:block;width:100%}
+.n b.h{display:flex;flex-wrap:wrap;gap:6px;align-items:baseline;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;font-weight:800;margin-bottom:2px}
+.n b.h .id{font-family:var(--mono);font-size:11px;letter-spacing:0;color:var(--fg);opacity:.7}
+.n.chat{border-color:var(--chat);background:var(--chat-bg)} .n.chat b.h{color:var(--chat)}
+.n.code{border-color:var(--code);background:var(--code-bg)} .n.code b.h{color:var(--code)}
+.n.shop{border-color:var(--shop);background:var(--shop-bg);border-width:2.5px;box-shadow:0 0 0 3px color-mix(in srgb,var(--shop) 18%,transparent)} .n.shop b.h{color:var(--shop)}
+.n.nv{border-color:var(--nv);background:var(--nv-bg)} .n.nv b.h{color:var(--nv)}
+.n.bot{border-color:var(--bot);background:var(--bot-bg)} .n.bot b.h{color:var(--bot)}
+.n.auto{border-color:var(--auto);background:var(--auto-bg)} .n.auto b.h{color:var(--auto)}
+.n.gap{border-style:dashed}
+.io{display:flex;flex-direction:column;gap:2px;margin-top:4px;font-size:12px;font-weight:400;color:var(--muted)}
+.io i{font-style:normal;font-weight:700;color:var(--fg);opacity:.75}
+.io .need i{color:var(--shop);opacity:1}
+.doi{display:block;margin-top:5px;font-size:12px;font-weight:500;color:var(--fg);border-left:3px solid var(--bot);padding-left:7px}
+.doi i{font-style:normal;font-weight:800;color:var(--bot)}
+.note{display:block;margin-top:5px;font-size:12px;font-weight:600;color:var(--shop);background:var(--shop-bg);border-radius:6px;padding:4px 7px}
+.loopbox{border:1.5px dashed var(--line);border-radius:8px;padding:8px;margin-top:6px;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.loopbox .mini{border:1.5px solid;border-radius:6px;padding:4px 8px;font-size:12.5px}
+.loopbox .arr{color:var(--muted);font-weight:700}
+.loopbox .back{flex-basis:100%;font-size:12px;color:var(--muted)}
+.mini.chat{border-color:var(--chat);background:var(--chat-bg)} .mini.code{border-color:var(--code);background:var(--code-bg)}
+.mini.nv{border-color:var(--nv);background:var(--nv-bg)} .mini.bot{border-color:var(--bot);background:var(--bot-bg)}
+.mini.shop{border-color:var(--shop);background:var(--shop-bg)} .mini.auto{border-color:var(--auto);background:var(--auto-bg)}
+.mini b{font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;margin-right:4px}
+
+body.edit .n{cursor:pointer}
+body.edit .n:hover{outline:2px dashed var(--bot);outline-offset:2px}
+.add{border:1.5px dashed var(--line);border-radius:8px;background:transparent;padding:6px;color:var(--muted);font-weight:600;cursor:pointer}
+body:not(.edit) .add, body:not(.edit) .edit-only{display:none}
+
+/* trạng thái tiến độ */
+.sb{display:inline-block;font-size:11px;font-weight:700;padding:1px 8px;border-radius:99px;white-space:nowrap}
+.sb.xong{background:var(--ok-bg);color:var(--ok)} .sb.dang{background:var(--doing-bg);color:var(--doing)}
+.sb.loi{background:var(--bad-bg);color:var(--bad)} .sb.chua{background:var(--todo-bg);color:var(--todo)}
+.stn{display:flex;gap:6px;align-items:baseline;flex-wrap:wrap;margin-top:6px;font-size:12px;font-weight:500}
+.n.st-chua{opacity:.62}
+.n.st-dang{box-shadow:0 0 0 3px var(--doing)!important}
+.n.st-loi{box-shadow:0 0 0 3px var(--bad)!important}
+.n.st-xong{box-shadow:inset 4px 0 0 var(--ok)}
+body.hide-st .stn{display:none} body.hide-st .n{opacity:1!important;box-shadow:none!important}
+body.hide-st .n.shop{box-shadow:0 0 0 3px color-mix(in srgb,var(--shop) 18%,transparent)!important}
+
+/* tóm tắt */
+.sum{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.sum .card{border:1px solid var(--line);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.sum .big{font-size:28px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1}
+.sum ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:3px;font-size:13px}
+.sum .lbl{font-size:12px;color:var(--muted);font-weight:600}
+
+/* danh sách sửa được */
+.list{display:flex;flex-direction:column;gap:8px}
+.item{border:1px solid var(--line);border-radius:8px;padding:10px;display:flex;flex-direction:column;gap:6px}
+.item .q{font-weight:600}
+.item textarea{width:100%;min-height:56px;border:1px solid var(--line);border-radius:6px;padding:6px 8px;background:var(--bg);resize:vertical}
+.item .ans{font-size:13px;color:var(--fg);background:var(--bg);border-radius:6px;padding:6px 8px;white-space:pre-wrap}
+.item .ans.empty{color:var(--muted);font-style:italic}
+
+/* hộp sửa bước */
+.sheet{position:fixed;inset:0;z-index:20;background:color-mix(in srgb,var(--fg) 35%,transparent);display:flex;justify-content:flex-end}
+.sheet[hidden]{display:none!important}
+.panel{background:var(--panel);width:min(460px,100%);height:100%;overflow:auto;padding:18px max(16px,env(safe-area-inset-right,0px)) 24px 18px;padding-top:calc(18px + env(safe-area-inset-top,0px));display:flex;flex-direction:column;gap:12px;border-left:1px solid var(--line)}
+.panel h3{margin:0;font-size:17px}
+.fld{display:flex;flex-direction:column;gap:4px}
+.fld label{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.fld input,.fld select,.fld textarea{border:1px solid var(--line);border-radius:6px;padding:7px 9px;background:var(--bg);width:100%}
+.fld textarea{min-height:64px;resize:vertical}
+.fld .hint{font-size:12px;color:var(--muted)}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--fg);color:var(--bg);padding:8px 14px;border-radius:8px;font-weight:600;z-index:30;max-width:calc(100% - 32px)}
+.toast[hidden]{display:none!important}
+@media (prefers-reduced-motion:no-preference){.panel{animation:in .18s ease-out}@keyframes in{from{transform:translateX(24px);opacity:.6}}}
+</style>
+
+<div class="bar" id="bar">
+  <span class="grow" id="bar-msg">J01 Glam Diamond · USA · bản Canva</span>
+  
+  <button class="btn" id="btn-edit" type="button">Sửa sơ đồ</button>
+  <button class="btn pri" id="btn-save" type="button" disabled>Lưu thay đổi</button>
+</div>
+<div class="wrap" id="app"></div>
+
+<div class="sheet" id="sheet" hidden>
+  <form class="panel" id="f">
+    <h3 id="f-title">Sửa bước</h3>
+    <div class="fld"><label for="f-id">Mã bước</label><input id="f-id" maxlength="12" required></div>
+    <div class="fld"><label for="f-who">Ai làm</label><select id="f-who"></select></div>
+    <div class="fld"><label for="f-ten">Việc</label><textarea id="f-ten" required></textarea></div>
+    <div class="fld"><label for="f-can">Cần (tài liệu phải có trước)</label><input id="f-can"></div>
+    <div class="fld"><label for="f-ra">Ra (kết quả, để ở đâu)</label><input id="f-ra"></div>
+    <div class="fld"><label for="f-vong">Vòng lặp (mỗi dòng 1 bước: ai: việc)</label><textarea id="f-vong" placeholder="nv: Gõ #loi trong thread&#10;code: Sửa, ghi đè file"></textarea><span class="hint">Để trống nếu không phải vòng lặp. Ai: shop, bot, chat, code, nv, auto.</span></div>
+    <div class="fld"><label for="f-doi">Thay đổi so với trước</label><textarea id="f-doi"></textarea></div>
+    <div class="fld"><label for="f-note">Ghi chú / yêu cầu của anh Hải</label><textarea id="f-note" placeholder="Vd: bước này em muốn Pixie làm luôn, không cần báo anh"></textarea></div>
+    <label class="row" style="font-size:13px"><input type="checkbox" id="f-gap" style="width:auto"> Còn cần chốt (viền đứt)</label>
+    <div class="row">
+      <button class="btn pri" type="submit">Xong</button>
+      <button class="btn" type="button" id="f-cancel">Huỷ</button>
+      <span style="flex:1"></span>
+      <button class="btn del" type="button" id="f-del">Xoá bước</button>
+    </div>
+    <p class="sub" style="font-size:12px">Bấm <b>Xong</b> chỉ cập nhật trên màn hình. Bấm <b>Lưu thay đổi</b> ở thanh trên cùng để lưu cho lần mở sau và để Claude đọc được.</p>
+  </form>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+<script type="application/json" id="quytrinh">{"ban": "J01 Glam Diamond · USA · chỉ bản Canva (CV) · 3 size 16x20 / 11x14 / 8x10 · 19 năm · mục tiêu 3 ngày", "sua_luc": "", "gop_y": "", "baocao": ["Chỉ báo anh khi kẹt: cùng 1 lỗi sửa lần 3 vẫn còn · Illustrator văng liên tục · cần anh quyết", "Mỗi bước lớn xong: cập nhật trang này + nhắn Space JOLIE POSTER 2027 (1 dòng + link trang)", "Xong hết: báo anh + ghi mục 6b BÁO SANG ETSY SUPPORT để đăng"], "chot": [], "sections": [{"id": "L", "ten": "Lịch 3 ngày", "phu": "AI và anh Hoà chạy song song, không ai ngồi chờ", "kieu": "grid", "steps": [{"id": "N1", "who": "auto", "ten": "NGÀY 1 · map dữ liệu → đổ 3 năm → anh Hoà kiểm 3 năm · song song: bắt đầu vẽ bối cảnh mới + viết mô tả/tag · đêm: đổ 16 năm"}, {"id": "N2", "who": "auto", "ten": "NGÀY 2 · anh Hoà kiểm 5 năm · xuất 2 lớp ảnh + lên Canva theo lô 4 năm, anh Hoà sửa Canva ngay từng lô · tối: 57 link + listing/tài liệu năm đầu"}, {"id": "N3", "who": "auto", "ten": "NGÀY 3 · listing + tài liệu 18 năm còn lại · kiểm cuối · báo anh sẵn sàng đăng"}, {"id": "N4", "who": "nv", "ten": "Anh Hoà: kiểm + duyệt từng chặng, sửa thẳng trên Canva; hết việc chặng này thì nhận chặng kế, không chờ"}]}, {"id": "I", "ten": "Đầu vào anh đã chuẩn bị", "kieu": "grid", "steps": [{"id": "I1", "who": "shop", "ten": "File mẫu .ai hoàn chỉnh", "ra": "02 MAU GOC/J01-USA-MASTER-16x20.ai"}, {"id": "I2", "who": "shop", "ten": "File .ai số kim cương theo từng năm (tuổi + năm) — chỉ lấy ghép vào"}, {"id": "I3", "who": "shop", "ten": "License font thương mại: đủ"}, {"id": "I4", "who": "auto", "ten": "Dữ liệu USA-2027 · 19 năm", "ra": "01 DU LIEU/USA-2027.csv"}]}, {"id": "G0", "ten": "GĐ0 · Chuẩn bị dữ liệu J01", "kieu": "flow", "steps": [{"id": "B0", "who": "chat", "ten": "Map dữ liệu vào bố cục J01 + bù chỗ thiếu: Sports ô 3 = FIFA (1962/82/2002), năm khác Super Bowl (trước 1967: NFL Championship) · Average Yearly Wages tra bổ sung 1927–1947 có nguồn · What is Trendy chia Women/Men 1982–2011 · What Things Cost chọn 7 mục hợp bố cục mẫu nhất", "ra": "Bảng map + CSV J01"}]}, {"id": "G1", "ten": "GĐ1 · Thử 3 năm", "phu": "lỗi lộ ra ở đây, không ở 19 năm", "kieu": "flow", "steps": [{"id": "B1", "who": "code", "ten": "Đổ 3 năm: nhóm tuổi nhỏ / vừa / lớn (mỗi nhóm lấy năm chữ dài nhất) + ghép số kim cương từ file .ai từng năm", "ra": "Drive J01 GLAM DIAMOND/USA/CV", "doi": "Illustrator văng với file nặng → 1 năm/lượt, lưu sau mỗi bước"}, {"id": "B1b", "who": "chat", "ten": "Báo anh Hoà cách thay ô FIFA (Super Bowl / NFL) → anh Hoà góp ý trước khi đổ hết 19 năm"}, {"id": "B2", "who": "nv", "ten": "Anh Hoà kiểm 3 năm, lặp đến khi duyệt", "vong": [["nv", "Gõ #loi + mô tả"], ["code", "Sửa + ghi CACH XU LY"], ["nv", "Kiểm lại"]], "back": "Lặp đến khi anh Hoà \"duyệt 3 năm\"", "doi": "cùng 1 lỗi lần 3 vẫn còn → dừng, báo anh"}]}, {"id": "G2", "ten": "GĐ2 · Đổ 19 năm", "kieu": "flow", "steps": [{"id": "B3", "who": "code", "ten": "Đổ 16 năm còn lại · bỏ trống tên + ngày/nơi sinh (khách sửa trên Canva) · máy tự so chữ với dữ liệu", "ra": "19 file + báo cáo kiểm", "doi": "kiểm nội dung tự động trước NV (#44)"}, {"id": "B4", "who": "nv", "ten": "Anh Hoà kiểm xác suất 5 năm, lặp đến khi duyệt", "vong": [["nv", "#loi"], ["code", "Sửa"], ["nv", "Kiểm lại"]], "back": "Lặp đến khi anh Hoà \"duyệt 19 năm\""}]}, {"id": "G3", "ten": "GĐ3 · Ảnh + Canva", "phu": "làm trước 1 năm, anh Hoà duyệt rồi mới chạy hết", "kieu": "flow", "steps": [{"id": "B5", "who": "code", "ten": "1 năm: xuất 2 lớp ảnh 300dpi chất lượng cao nhất (16x20 = 4800×6000) · lớp 1 nền · lớp 2 toàn bộ nội dung phía trên kể cả bản đồ (PNG trong suốt, để anh Hoà co nhỏ khi làm 11x14)"}, {"id": "B5b", "who": "chat", "ten": "Dựng Canva 3 size năm đầu: 2 lớp ảnh + tên chữ sống đổ gradient + ngày/nơi sinh chữ sống", "vong": [["chat", "Dựng 3 size"], ["nv", "anh Hoà duyệt"]], "back": "anh Hoà \"duyệt Canva\" → chạy hết"}, {"id": "B6", "who": "code", "ten": "Xuất 2 lớp ảnh 18 năm còn lại → Claude chat đưa lên đủ 57 bản Canva (19 năm × 3 size)", "ra": "57 bản Canva"}, {"id": "B7", "who": "nv", "ten": "Anh Hoà kiểm 57 bản, sửa luôn trên Canva không cần báo AI · xuất hình theo lô cho AI ghép mockup + tài liệu", "ra": "57 PNG", "doi": "Canva là bản chuẩn của CV"}, {"id": "B8", "who": "chat", "ten": "Lấy 57 link template (chế độ dùng làm template)", "ra": "01 DU LIEU/CANVA-LINKS-USA-J01.csv"}]}, {"id": "G4a", "ten": "Song song · Bối cảnh", "phu": "bắt đầu từ ngày 1", "kieu": "lane", "steps": [{"id": "B9", "who": "code", "ten": "Vẽ bộ bối cảnh mockup MỚI, khác J02 · theo tiêu chí v2", "doi": "tránh khung lệch #55 #59: khung đúng 4:5, poster khít khung, đáy thẳng hàng"}]}, {"id": "G4b", "ten": "Song song · Mô tả + tag", "phu": "bắt đầu từ ngày 1", "kieu": "lane", "steps": [{"id": "B10", "who": "chat", "ten": "19 tiêu đề + mô tả + 13 tag", "ra": "19 bộ"}]}, {"id": "G5", "ten": "GĐ4 · Listing + tài liệu bàn giao", "phu": "làm trước 1 năm", "kieu": "flow", "steps": [{"id": "B11", "who": "code", "ten": "1 bộ listing + 1 file tài liệu bàn giao (link Canva thật, email shop, Done-For-You)", "vong": [["code", "Làm 1 năm"], ["nv", "anh Hoà duyệt"], ["code", "18 năm còn lại"]], "back": "Duyệt xong mới đổ hết", "ra": "19 bộ listing + 19 PDF"}]}, {"id": "G6", "ten": "GĐ5 · Kiểm cuối + báo", "kieu": "flow", "steps": [{"id": "B12", "who": "chat", "ten": "Kiểm tự động: đủ file, link đúng năm, email, Done-For-You, mô tả + tag, Drive, Sheet quản lý"}, {"id": "B13", "who": "nv", "ten": "Anh Hoà kiểm xác suất 3 năm bộ cuối"}, {"id": "B14", "who": "chat", "ten": "Báo anh \"J01 sẵn sàng đăng\" + mục 6b BÁO SANG ETSY SUPPORT + nhắn Space"}, {"id": "B15", "who": "shop", "ten": "Đăng listing"}]}]}</script>
+<!--TIENDO-START-->
+<script type="application/json" id="tiendo">{"luc": "28/10/2026 12:00", "buoc": {"I1": {"s": "xong", "g": "anh đã có"}, "I2": {"s": "xong", "g": "anh đã có"}, "I3": {"s": "xong", "g": "anh đã có"}, "I4": {"s": "xong", "g": "anh đã có"}, "B0": {"s": "dang", "g": "đã đối chiếu dữ liệu, chờ anh duyệt quy trình"}}}</script>
+<!--TIENDO-END-->
+<script id="appjs">
+(function () {
+  var WHO = { shop: 'Anh Hải', bot: 'Pixie (bot)', chat: 'Claude chat', code: 'Máy Mac · Claude Code', nv: 'Nhân viên', auto: 'Tự động' };
+  var ORDER = ['shop', 'bot', 'code', 'chat', 'nv', 'auto'];
+  var Q = JSON.parse(document.getElementById('quytrinh').textContent);
+  var TD = {}; try { TD = JSON.parse(document.getElementById('tiendo').textContent); } catch (e) {}
+  var app = document.getElementById('app');
+  var dirty = 0, editing = false, cur = null, artifactNs = null, readOnly = false;
+  var LAB = { xong: 'XONG', dang: 'ĐANG', loi: 'LỖI', chua: 'CHƯA' };
+
+  function el(tag, cls, txt) { var e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; }
+  function allSteps() { var a = []; Q.sections.forEach(function (s) { s.steps.forEach(function (st) { a.push(st); }); }); return a; }
+
+  function stepCard(st, sec) {
+    var c = el('div', 'n ' + st.who + (st.gap ? ' gap' : ''));
+    c.dataset.step = st.id; c.tabIndex = 0; c.setAttribute('role', 'button');
+    var h = el('b', 'h'); h.appendChild(el('span', 'id', st.id)); h.appendChild(document.createTextNode(WHO[st.who] || st.who)); c.appendChild(h);
+    c.appendChild(el('span', '', st.ten));
+    if (st.vong && st.vong.length) {
+      var lb = el('div', 'loopbox');
+      st.vong.forEach(function (v, i) {
+        if (i) lb.appendChild(el('span', 'arr', '→'));
+        var m = el('span', 'mini ' + v[0]); m.appendChild(el('b', '', WHO[v[0]] || v[0])); m.appendChild(document.createTextNode(v[1])); lb.appendChild(m);
+      });
+      if (st.back) lb.appendChild(el('span', 'back', st.back));
+      c.appendChild(lb);
+    }
+    if (st.can || st.ra) {
+      var io = el('div', 'io');
+      if (st.can) { var n1 = el('span', 'need'); n1.appendChild(el('i', '', 'Cần: ')); n1.appendChild(document.createTextNode(st.can)); io.appendChild(n1); }
+      if (st.ra) { var n2 = el('span'); n2.appendChild(el('i', '', 'Ra: ')); n2.appendChild(document.createTextNode(st.ra)); io.appendChild(n2); }
+      c.appendChild(io);
+    }
+    if (st.doi) { var d = el('span', 'doi'); d.appendChild(el('i', '', 'Từ J02: ')); d.appendChild(document.createTextNode(st.doi)); c.appendChild(d); }
+    if (st.note) c.appendChild(el('span', 'note', 'Anh Hải: ' + st.note));
+    var b = (TD.buoc || {})[st.id];
+    if (b) {
+      c.classList.add('st-' + b.s);
+      var sn = el('div', 'stn'); sn.appendChild(el('span', 'sb ' + b.s, LAB[b.s] || b.s)); if (b.g) sn.appendChild(el('span', '', b.g)); c.appendChild(sn);
+    }
+    c.addEventListener('click', function () { if (editing) openForm(sec, st); });
+    c.addEventListener('keydown', function (e) { if (editing && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); openForm(sec, st); } });
+    return c;
+  }
+
+  function addBtn(sec) {
+    var b = el('button', 'add', '+ Thêm bước'); b.type = 'button';
+    b.addEventListener('click', function () { openForm(sec, null); });
+    return b;
+  }
+
+  function render() {
+    app.textContent = '';
+    // đầu trang
+    var hd = el('header'); hd.style.cssText = 'display:flex;flex-direction:column;gap:10px;padding-top:18px';
+    hd.appendChild(el('h1', '', 'J01 Glam Diamond · Quy trình sản xuất bản Canva'));
+    var p = el('p', 'sub'); p.textContent = Q.ban + (Q.sua_luc ? ' · anh sửa lần cuối ' + Q.sua_luc : '') + '. Viền hồng = bài học rút từ J02. Viền cam = phần của anh.';
+    hd.appendChild(p);
+    var lg = el('div', 'legend');
+    ORDER.forEach(function (k) { lg.appendChild(el('span', 'chip ' + k, WHO[k])); });
+    lg.appendChild(el('span', 'chip gap', 'viền đứt · cần chốt'));
+    hd.appendChild(lg);
+    app.appendChild(hd);
+
+    // tóm tắt
+    var steps = allSteps(), cnt = {}; steps.forEach(function (s) { cnt[s.who] = (cnt[s.who] || 0) + 1; });
+    var shopSteps = steps.filter(function (s) { return s.who === 'shop' && !/^(B[5-9]|O)/.test(s.id); });
+    var sum = el('section', 'block'); sum.appendChild(el('h2', '', 'Tóm tắt'));
+    var g = el('div', 'sum');
+    var c1 = el('div', 'card'); c1.appendChild(el('span', 'lbl', 'Phần của anh'));
+    c1.appendChild(el('span', 'big', String(shopSteps.length) + ' khâu'));
+    var ul = el('ul'); shopSteps.forEach(function (s) { ul.appendChild(el('li', '', s.id + ' · ' + s.ten)); }); c1.appendChild(ul); g.appendChild(c1);
+    var c2 = el('div', 'card'); c2.appendChild(el('span', 'lbl', 'Số bước theo người làm'));
+    var ul2 = el('ul'); ORDER.forEach(function (k) { if (cnt[k]) ul2.appendChild(el('li', '', WHO[k] + ': ' + cnt[k])); }); c2.appendChild(ul2);
+    var tl = el('span', 'lbl'); tl.textContent = 'AI + anh Hoà tự phối hợp · chỉ báo anh khi kẹt và khi xong'; c2.appendChild(tl);
+    g.appendChild(c2); sum.appendChild(g); app.appendChild(sum);
+
+    // các phần
+    var cols = null;
+    Q.sections.forEach(function (sec) {
+      var box;
+      if (sec.kieu === 'lane') {
+        if (!cols) { cols = el('div', 'cols'); app.appendChild(cols); }
+        box = el('section', 'lane');
+        var hh = el('div', 'head'); var h3 = el('h3', '', sec.ten); if (sec.phu) h3.appendChild(el('span', '', sec.phu)); hh.appendChild(h3);
+        var shopIn = sec.steps.filter(function (s) { return s.who === 'shop'; }).map(function (s) { return s.id; });
+        box.appendChild(hh); box.appendChild(el('p', 'count', 'Anh: ' + (shopIn.join(' · ') || 'không')));
+        cols.appendChild(box);
+      } else {
+        box = el('section', 'block'); var hh2 = el('div', 'head'); hh2.appendChild(el('h2', '', sec.ten)); box.appendChild(hh2); app.appendChild(box);
+      }
+      var wrap = el('div', sec.kieu === 'grid' ? 'grid' : 'flow');
+      sec.steps.forEach(function (st) {
+        if (st.nhom) wrap.appendChild(el('h4', '', st.nhom));
+        wrap.appendChild(stepCard(st, sec));
+      });
+      box.appendChild(wrap); box.appendChild(addBtn(sec));
+    });
+
+    // báo cáo sáng
+    var bc = el('section', 'block'); bc.appendChild(el('h2', '', 'Cách báo cáo'));
+    var lb = el('div', 'list');
+    Q.baocao.forEach(function (t, i) {
+      var it = el('div', 'item');
+      if (editing) { var ta = el('textarea'); ta.id = 'bc-' + i; ta.value = t; ta.addEventListener('input', function () { Q.baocao[i] = ta.value; mark(); }); it.appendChild(ta); }
+      else it.appendChild(el('span', '', t));
+      lb.appendChild(it);
+    });
+    bc.appendChild(lb);
+    if (editing) { var ab = el('button', 'add', '+ Thêm dòng'); ab.type = 'button'; ab.addEventListener('click', function () { Q.baocao.push(''); mark(); render(); }); bc.appendChild(ab); }
+    app.appendChild(bc);
+
+    // cần chốt
+    var ch = el('section', 'block'); ch.appendChild(el('h2', '', 'Anh chốt giúp (trả lời ngay tại đây)'));
+    var lc = el('div', 'list');
+    Q.chot.forEach(function (o, i) {
+      var it = el('div', 'item'); it.appendChild(el('span', 'q', (i + 1) + '. ' + o.q));
+      if (editing) { var ta = el('textarea'); ta.id = 'chot-' + i; ta.value = o.a; ta.placeholder = 'Anh gõ câu trả lời…'; ta.addEventListener('input', function () { o.a = ta.value; mark(); }); it.appendChild(ta); }
+      else it.appendChild(el('span', 'ans' + (o.a ? '' : ' empty'), o.a || 'Chưa trả lời · bấm "Sửa sơ đồ" để trả lời'));
+      lc.appendChild(it);
+    });
+    ch.appendChild(lc);
+    var gy = el('div', 'item'); gy.appendChild(el('span', 'q', 'Góp ý chung cho cả quy trình'));
+    if (editing) { var tg = el('textarea'); tg.id = 'gop-y'; tg.value = Q.gop_y || ''; tg.addEventListener('input', function () { Q.gop_y = tg.value; mark(); }); gy.appendChild(tg); }
+    else gy.appendChild(el('span', 'ans' + (Q.gop_y ? '' : ' empty'), Q.gop_y || 'Chưa có'));
+    ch.appendChild(gy);
+    app.appendChild(ch);
+  }
+
+  // ----- sửa bước -----
+  var sheet = document.getElementById('sheet'), f = document.getElementById('f');
+  var fWho = document.getElementById('f-who');
+  ORDER.forEach(function (k) { var o = el('option', '', WHO[k]); o.value = k; fWho.appendChild(o); });
+  function openForm(sec, st) {
+    cur = { sec: sec, st: st };
+    document.getElementById('f-title').textContent = st ? 'Sửa bước ' + st.id : 'Thêm bước vào ' + sec.ten;
+    var v = st || { id: '', who: 'bot', ten: '', can: '', ra: '', doi: '', note: '' };
+    document.getElementById('f-id').value = v.id || '';
+    fWho.value = v.who || 'bot';
+    document.getElementById('f-ten').value = v.ten || '';
+    document.getElementById('f-can').value = v.can || '';
+    document.getElementById('f-ra').value = v.ra || '';
+    document.getElementById('f-vong').value = (v.vong || []).map(function (x) { return x[0] + ': ' + x[1]; }).join('\n');
+    document.getElementById('f-doi').value = v.doi || '';
+    document.getElementById('f-note').value = v.note || '';
+    document.getElementById('f-gap').checked = !!v.gap;
+    document.getElementById('f-del').hidden = !st;
+    sheet.hidden = false; document.getElementById('f-ten').focus();
+  }
+  function closeForm() { sheet.hidden = true; cur = null; }
+  document.getElementById('f-cancel').addEventListener('click', closeForm);
+  sheet.addEventListener('click', function (e) { if (e.target === sheet) closeForm(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !sheet.hidden) closeForm(); });
+  f.addEventListener('submit', function (e) {
+    e.preventDefault(); if (!cur) return;
+    var st = cur.st || {};
+    st.id = document.getElementById('f-id').value.trim() || ('M' + Date.now() % 1000);
+    st.who = fWho.value;
+    st.ten = document.getElementById('f-ten').value.trim();
+    ['can', 'ra', 'doi', 'note'].forEach(function (k) { var v = document.getElementById('f-' + k).value.trim(); if (v) st[k] = v; else delete st[k]; });
+    var vong = document.getElementById('f-vong').value.split('\n').map(function (l) {
+      var m = l.match(/^\s*(shop|bot|chat|code|nv|auto)\s*:\s*(.+)$/i); return m ? [m[1].toLowerCase(), m[2].trim()] : null;
+    }).filter(Boolean);
+    if (vong.length) st.vong = vong; else delete st.vong;
+    if (document.getElementById('f-gap').checked) st.gap = true; else delete st.gap;
+    if (!cur.st) cur.sec.steps.push(st);
+    closeForm(); mark(); render();
+  });
+  document.getElementById('f-del').addEventListener('click', function () {
+    if (!cur || !cur.st) return;
+    var i = cur.sec.steps.indexOf(cur.st); if (i >= 0) cur.sec.steps.splice(i, 1);
+    closeForm(); mark(); render(); toast('Đã xoá bước · bấm Lưu thay đổi để giữ');
+  });
+
+  // ----- thanh công cụ -----
+  var bSave = document.getElementById('btn-save'), bEdit = document.getElementById('btn-edit'), bSt = document.getElementById('btn-st');
+  function mark() { dirty++; bSave.disabled = readOnly; bSave.textContent = 'Lưu thay đổi (' + dirty + ')'; }
+  function toast(t) { var x = document.getElementById('toast'); x.textContent = t; x.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(function () { x.hidden = true; }, 3200); }
+  bEdit.addEventListener('click', function () {
+    editing = !editing; document.body.classList.toggle('edit', editing);
+    bEdit.classList.toggle('on', editing); bEdit.textContent = editing ? 'Xem' : 'Sửa sơ đồ';
+    document.getElementById('bar-msg').textContent = editing ? 'Đang sửa · bấm vào bước bất kỳ để sửa, hoặc "+ Thêm bước"' : 'J01 Glam Diamond · USA · bản Canva';
+    render();
+  });
+  if(bSt)bSt.addEventListener('click', function () { var h = document.body.classList.toggle('hide-st'); bSt.textContent = h ? 'Hiện tiến độ' : 'Ẩn tiến độ'; });
+
+  function esc(s) { return s.replace(/</g, '\\u003c'); }
+  function buildDoc() {
+    var head = '<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>';
+    var parts = [];
+    parts.push('<title>Quy trình J01 Glam Diamond</title>\n<meta name="claude:viewport-fit-sides" content="cover">\n');
+    parts.push('<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;800&family=JetBrains+Mono:wght@500&display=swap">\n');
+    parts.push('<style id="css">' + document.getElementById('css').textContent + '</style>\n');
+    parts.push(document.getElementById('bar').outerHTML.replace(/<button class="btn pri" id="btn-save"[^>]*>[^<]*<\/button>/, '<button class="btn pri" id="btn-save" type="button" disabled>Lưu thay đổi</button>').replace(/<span class="grow" id="bar-msg">[\s\S]*?<\/span>/, '<span class="grow" id="bar-msg">J01 Glam Diamond · USA · bản Canva</span>').replace(/<button class="btn on" id="btn-edit"[^>]*>[^<]*<\/button>/, '<button class="btn" id="btn-edit" type="button">Sửa sơ đồ</button>').replace(/<button class="btn" id="btn-st"[^>]*>[^<]*<\/button>/, '<button class="btn" id="btn-st" type="button">Ẩn tiến độ</button>') + '\n');
+    parts.push('<div class="wrap" id="app"></div>\n');
+    parts.push(document.getElementById('sheet').outerHTML.replace(/<div class="sheet" id="sheet"[^>]*>/, '<div class="sheet" id="sheet" hidden>') + '\n');
+    parts.push('<div class="toast" id="toast" hidden></div>\n');
+    parts.push('<script type="application/json" id="quytrinh">' + esc(JSON.stringify(Q)) + '<\/script>\n');
+    parts.push('<!--TIENDO-START-->\n<script type="application/json" id="tiendo">' + esc(document.getElementById('tiendo').textContent) + '<\/script>\n<!--TIENDO-END-->\n');
+    parts.push('<script id="appjs">' + document.getElementById('appjs').textContent + '<\/script>\n');
+    return head + parts.join('') + '</body></html>';
+  }
+
+  bSave.addEventListener('click', function () {
+    if (!artifactNs) { toast('Trang này chưa lưu được ở chế độ xem hiện tại'); return; }
+    var d = new Date(); Q.sua_luc = ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2) + ' ' + d.getDate() + '/' + (d.getMonth() + 1) + '/' + d.getFullYear();
+    bSave.disabled = true; bSave.textContent = 'Đang lưu…';
+    artifactNs.publish(buildDoc()).then(function () { toast('Đã lưu'); }).catch(function (err) {
+      var c = err && err.code;
+      if (c === 'conflict') { toast('Có bản mới hơn vừa được lưu, trang đang tải lại'); return; }
+      if (c === 'not_writer' || c === 'not_granted') { readOnly = true; bSave.disabled = true; bSave.textContent = 'Chỉ xem'; toast('Anh đang ở chế độ chỉ xem, không lưu được'); return; }
+      bSave.disabled = false; bSave.textContent = 'Lưu thay đổi (' + dirty + ')'; toast('Chưa lưu được (' + (c || 'lỗi') + '). Thử lại sau ít phút.');
+    });
+  });
+
+  window.addEventListener('beforeunload', function (e) { if (dirty && !bSave.disabled) { e.preventDefault(); } });
+  render();
+  if (window.claude && window.claude.use) {
+    window.claude.use('artifact').then(function (ns) { artifactNs = ns; if (!ns) { readOnly = true; bSave.textContent = 'Chỉ xem'; } }).catch(function () { readOnly = true; });
+  } else { readOnly = true; bSave.textContent = 'Chỉ xem'; }
+})();
+</script>
+</html>
